@@ -18,6 +18,7 @@ void* thread1_start(void* arg) {
     printf("[Thread1] mutex_b 점유 성공!\n");
     pthread_mutex_unlock(&mutex_b);
     pthread_mutex_unlock(&mutex_a);
+    printf("[Thread1] 작업 완료!\n");
     
     return NULL;
 }
@@ -56,6 +57,8 @@ void* thread2_start(void* arg) {
 
     pthread_mutex_unlock(&mutex_a);
     pthread_mutex_unlock(&mutex_b);
+    printf("[Thread2] 작업 완료!\n");
+    
     return NULL;
 }
 
