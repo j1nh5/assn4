@@ -25,9 +25,11 @@ void* thread1_start(void* arg) {
 void* thread2_start(void* arg) {
     int count = 0;
 
-    printf("[Thread1] mutex_b 요구 중...\n");
+    printf("[Thread2] mutex_b 요구 중...\n");
     pthread_mutex_lock(&mutex_b);
-    printf("[Thread1] mutex_b 점유 성공!\n");
+    printf("[Thread2] mutex_b 점유 성공!\n");
+
+    printf("[Thread2] mutex_a 요구 중...\n");
     
     while (pthread_mutex_trylock(&mutex_a) != 0) {
         count++;
@@ -35,19 +37,18 @@ void* thread2_start(void* arg) {
         sleep(1);
 
         if (count >= 3) {
-            printf("[!] Deadlock 탐지됨! 복구(Recover)를 위해 B를 내려놓습니다.\n");
-            pthread_mutex_unlock(&mutex_b); // 복구(Recover): 내 자원을 포기
+            printf("[Thread2] Deadlock 탐지, 복구를 위해 mutex_b 풀어주기.\n");
+            pthread_mutex_unlock(&mutex_b);
             
-            sleep(3); // 스레드 1이 일 다 할 때까지 넉넉히 쉬어줌
+            sleep(3);
             
-            // 처음부터 다시 시작
-            printf("[Thread 2] 다시 B부터 잠그고 시작합니다.\n");
+            printf("[Thread2] mutex_b 요구 중...\n");
             pthread_mutex_lock(&mutex_b);
-            fail_count = 0; // 카운트 초기화
+            count = 0; // 카운트 초기화
         }
     }
-    
-    printf("[Thread 2] 작업 완료!\n");
+
+    printf("[Thread2] mutex_a 점유 성공!\n");
     pthread_mutex_unlock(&mutex_a);
     pthread_mutex_unlock(&mutex_b);
     return NULL;
