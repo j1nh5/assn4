@@ -45,6 +45,6 @@ int main() {
     pthread_create(&thread2, NULL, thread2_start, NULL);
     pthread_join(thread1, NULL);
     pthread_join(thread2, NULL);
-    printf("--- 프로그램 정상 종료 (Deadlock 회피 성공!) ---\n");
+    printf("--- 프로그램 정상 종료 ---\n");
     return 0;
 }
