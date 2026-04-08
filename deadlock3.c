@@ -7,13 +7,13 @@ pthread_mutex_t mutex_a = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_b = PTHREAD_MUTEX_INITIALIZER;
 
 void* thread1_start(void* arg) {
-     printf("[Thread1] mutex_a 요구 중...\n");
+     printf("[Thread1] Request mutex_a...\n");
      pthread_mutex_lock(&mutex_a);
      printf("[Thread1] mutex_a 점유 성공!\n");
 
      sleep(1); 
 
-     printf("[Thread1] mutex_b 요구 중...\n");
+     printf("[Thread1] Request mutex_b...\n");
      pthread_mutex_lock(&mutex_b);
      printf("[Thread1] mutex_b 점유 성공!\n");
      pthread_mutex_unlock(&mutex_b);
@@ -25,12 +25,12 @@ void* thread1_start(void* arg) {
 
 void* thread2_start(void* arg) {
     while (1) {
-        printf("[Thread2] mutex_b 요구 중...\n");
+        printf("[Thread2] Request mutex_b...\n");
         pthread_mutex_lock(&mutex_b);
         printf("[Thread2] mutex_b 점유 성공!\n");
         sleep(1);
 
-        printf("[Thread2] mutex_a 요구 중...\n");
+        printf("[Thread2] Request mutex_a...\n");
         
         if (pthread_mutex_trylock(&mutex_a) == 0) {
             printf("[Thread2] mutex_a 점유 성공!\n");
