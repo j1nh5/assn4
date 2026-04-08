@@ -29,7 +29,7 @@ void* thread2_start(void* arg) {
         printf("[Thread2] mutex_b 점유 성공!\n");
         sleep(1);
 
-        printf("[Thread2] mutex_a 요구 중...\n")
+        printf("[Thread2] mutex_a 요구 중...\n");
         
         if (pthread_mutex_trylock(&mutex_a) == 0) {
             printf("[Thread2] mutex_a 점유 성공!\n");
