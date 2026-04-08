@@ -7,28 +7,34 @@ pthread_mutex_t mutex_a = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_b = PTHREAD_MUTEX_INITIALIZER;
 
 void* thread1_start(void* arg) {
+    printf("[Thread1] mutex_a 요구 중...\n");
     pthread_mutex_lock(&mutex_a);
-    sleep(1);
+    printf("[Thread1] mutex_a 점유 성공!\n");
+
+    sleep(1); 
+
+    printf("[Thread1] mutex_b 요구 중...\n");
     pthread_mutex_lock(&mutex_b);
-    printf("[Thread 1] 작업 완료!\n");
+    printf("[Thread1] mutex_b 점유 성공!\n");
     pthread_mutex_unlock(&mutex_b);
     pthread_mutex_unlock(&mutex_a);
+    
     return NULL;
 }
 
 void* thread2_start(void* arg) {
-    int fail_count = 0; // 실패 횟수를 기억할 변수
+    int count = 0;
 
+    printf("[Thread1] mutex_b 요구 중...\n");
     pthread_mutex_lock(&mutex_b);
+    printf("[Thread1] mutex_b 점유 성공!\n");
     
-    // 💡 해결 포인트: trylock이 실패할 때마다 실패 횟수를 셉니다.
     while (pthread_mutex_trylock(&mutex_a) != 0) {
-        fail_count++;
-        printf("[Thread 2] A 잠금 실패... (실패 횟수: %d)\n", fail_count);
+        count++;
+        printf("[Thread2] mutex_a 점유 실패...\n");
         sleep(1);
 
-        // 탐지(Detect): 3번 연속 실패하면 데드락으로 간주!
-        if (fail_count >= 3) {
+        if (count >= 3) {
             printf("[!] Deadlock 탐지됨! 복구(Recover)를 위해 B를 내려놓습니다.\n");
             pthread_mutex_unlock(&mutex_b); // 복구(Recover): 내 자원을 포기
             
