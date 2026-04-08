@@ -28,9 +28,15 @@ void* thread2_start(void* arg) {
     printf("[Thread2] mutex_b 요구 중...\n");
     pthread_mutex_lock(&mutex_b);
     printf("[Thread2] mutex_b 점유 성공!\n");
-    
-    while (pthread_mutex_trylock(&mutex_a) != 0) {
+
+    while (1) {
         printf("[Thread2] mutex_a 요구 중...\n");
+        
+        if (pthread_mutex_trylock(&mutex_a) == 0) {
+            printf("[Thread2] mutex_a 점유 성공!\n");
+            break;
+        }
+
         count++;
         printf("[Thread2] mutex_a 점유 실패...\n");
         sleep(1);
@@ -44,11 +50,10 @@ void* thread2_start(void* arg) {
             printf("[Thread2] mutex_b 요구 중...\n");
             pthread_mutex_lock(&mutex_b);
             printf("[Thread2] mutex_b 점유 성공!\n");
-            count = 0; // 카운트 초기화
+            count = 0;
         }
     }
 
-    printf("[Thread2] mutex_a 점유 성공!\n");
     pthread_mutex_unlock(&mutex_a);
     pthread_mutex_unlock(&mutex_b);
     return NULL;
