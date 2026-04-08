@@ -28,16 +28,20 @@ void* thread2_start(void* arg) {
         pthread_mutex_lock(&mutex_b);
         printf("[Thread2] mutex_b 점유 성공!\n");
         sleep(1);
+
+        printf("[Thread2] mutex_a 요구 중...\n")
         
-        if (pthread_mutex_trylock(&mutex_a) == 0) { 
-            printf("[Thread2] 작업 완료!\n");
+        if (pthread_mutex_trylock(&mutex_a) == 0) {
+            printf("[Thread2] mutex_a 점유 성공!\n");
             pthread_mutex_unlock(&mutex_a);
             pthread_mutex_unlock(&mutex_b);
             break;
         } 
         else {
+            printf("[Thread2] mutex_a 점유 실패!\n");
             printf("[Thread2] Thread1이 mutex_a 사용 중 mutex_b 풀어주기.\n");
             pthread_mutex_unlock(&mutex_b);
+            printf("[Thread2] 대기 후 다시 시도...\n");
             sleep(1);
         }
     }
