@@ -8,29 +8,29 @@ pthread_mutex_t mutex_b = PTHREAD_MUTEX_INITIALIZER;
 
 void* thread1_start(void* arg) {
      printf("[Thread1] mutex_a 요구 중...\n");
-    pthread_mutex_lock(&mutex_a);
-    printf("[Thread1] mutex_a 점유 성공!\n");
+     pthread_mutex_lock(&mutex_a);
+     printf("[Thread1] mutex_a 점유 성공!\n");
 
-    sleep(1); 
+     sleep(1); 
 
-    printf("[Thread1] mutex_b 요구 중...\n");
-    pthread_mutex_lock(&mutex_b);
-    printf("[Thread1] mutex_b 점유 성공!\n");
-    pthread_mutex_unlock(&mutex_b);
-    pthread_mutex_unlock(&mutex_a);
+     printf("[Thread1] mutex_b 요구 중...\n");
+     pthread_mutex_lock(&mutex_b);
+     printf("[Thread1] mutex_b 점유 성공!\n");
+     pthread_mutex_unlock(&mutex_b);
+     pthread_mutex_unlock(&mutex_a);
     
-    return NULL;
+     return NULL;
 }
 
 void* thread2_start(void* arg) {
-    while (1) { // 성공할 때까지 계속 재도전
-        pthread_mutex_lock(&mutex_b); // B를 먼저 잡음
+    while (1) {
+        printf("[Thread1] mutex_b 요구 중...\n");
+        pthread_mutex_lock(&mutex_b);
+        printf("[Thread1] mutex_b 점유 성공!\n");
         sleep(1);
         
-        // 💡 해결 포인트: A가 잠겨있는지 찔러보기 (trylock)
-        // 0이 나오면 성공, 0이 아니면 남이 쓰고 있다는 뜻
         if (pthread_mutex_trylock(&mutex_a) == 0) { 
-            printf("[Thread 2] 작업 완료!\n");
+            printf("[Thread2] 작업 완료!\n");
             pthread_mutex_unlock(&mutex_a);
             pthread_mutex_unlock(&mutex_b);
             break; // 작업 성공했으니 반복문 탈출!
